@@ -96,3 +96,39 @@ def update_student(students):
     
         
 
+
+def main():
+    students = []
+
+    while True:
+        show_menu()
+        choice = input_int("Choose: ")
+
+        if choice == 1:
+            add_student(students)
+
+        elif choice == 2:
+            showall_student(students)
+
+        elif choice == 3:
+            update_student(students)
+
+        elif choice == 4:
+            print("Delete student: Not implemented")
+
+        elif choice == 5:
+            print("Search student: Not implemented")
+
+        elif choice == 6:
+            print("Statistics: Not implemented")
+
+        elif choice == 0:
+            print("Program ended.")
+            break
+
+        else:
+            print("Invalid choice!")
+
+
+if __name__ == "__main__":
+    main()
