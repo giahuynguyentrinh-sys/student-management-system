@@ -44,12 +44,15 @@ def add_student(students):
     student["major"] = input("press major: ")
     student["math"] = checkvalid_score(input_int("Press math score: "))
     student["english"] = checkvalid_score(input_int("Press english score: "))
-    student["programming"] = checkvalid_score(input_int("Press programming score"))
+    student["programming"] = checkvalid_score(input_int("Press programming score: "))
     students.append(student)
     print("add student successfully")
     return
 
 def showall_student(students):
+    if(len(students)) == 0:
+        print("no students")
+        return 
     for i in range(len(students)):
         print(students[i])
         
@@ -59,7 +62,7 @@ def update_student(students):
     while found_student == False:
         if v < 0:
             print("error: id < 0")    
-            v =input_int("press a positive interger id")
+            v =input_int("press a positive interger id: ")
             continue
         for i in range (len(students)):
             if v == students[i]["id"]:
@@ -71,7 +74,10 @@ def update_student(students):
             v= input_int("this id don't exist press another id: ")
     n = -1
     while n != 0:
-        n = input_int("1. Name\n2. Age\n3. Gender\n4. Major\n5. Math\n6. English\n7. Programming\n0. Cancel\nChoose an aspect you want to change")
+        n = input_int("1. Name\n2. Age\n3. Gender\n4. Major\n5. Math\n6. English\n7. Programming\n0. Cancel\nChoose an aspect you want to change: ")
+        while n < 0 or n >7:
+            print("1. Name\n2. Age\n3. Gender\n4. Major\n5. Math\n6. English\n7. Programming\n0. Cancel")
+            n=input_int("press valid number (0 to 7)")
         if n == 1:
             x["name"] = input("change your name: ")
         elif n == 2:
@@ -92,43 +98,71 @@ def update_student(students):
             x["programming"] = checkvalid_score(input_int("change programming score: "))
     print("update completed")
         
+def delete_student(students):
+    n = input_int("press id to delete: ")
+    v = False
+    while v == False:
+            if n < 0:
+                print("error: id < 0")    
+                n=input_int("press a positive interger")
+                continue
+            for i in range (len(students)):
+                        if n == students[i]["id"]:
+                            v = True
+                            del students[i]
+                            break
+            else:
+                v = False
+                n= input_int("this id don't exist press another id: ")
+            
+
+def search_student(students):
+    choice = input_int("1. Search by ID\n2. Search by Name\n3. Search by Major")
+    if choice == 1:
+        myid = input_int("press id to search student: ")
+        foundid = False
+        while foundid == False:
+                    if myid < 0:
+                        print("error: id < 0")    
+                        myid=input_int("press a positive interger")
+                        continue
+                    for i in range (len(students)):
+                                if myid == students[i]["id"]:
+                                    foundid = True
+                                    print(students[i])
+                                    break
+                    else:
+                        foundid= True
+                        print("this id don't exist")
+    elif choice == 2:
+        myname = input("press name: ")
+        foundname = False
+        while foundname == False:
+            listname = []
+            for i in range (len(students)):
+                if myname == students[i]["name"]:
+                    listname.append(students[i])
+                    foundname = True
+            if len(listname) == 0:
+                print("no name found")
+                break
+            print(listname)
+    elif choice == 3:
+    mymajor = input("press major: ")
+    foundmajor = False
+    while foundmajor == False:
+        listmajor = []
+        for i in range(len(students)):
+            if mymajor == students[i]["major"]:
+                listmajor.append(students[i])
+                foundmajor = True
+        if len(listmajor) == 0:
+            print("no major found")
+            break
+        print(listmajor)
+    
+                
             
     
         
 
-
-def main():
-    students = []
-
-    while True:
-        show_menu()
-        choice = input_int("Choose: ")
-
-        if choice == 1:
-            add_student(students)
-
-        elif choice == 2:
-            showall_student(students)
-
-        elif choice == 3:
-            update_student(students)
-
-        elif choice == 4:
-            print("Delete student: Not implemented")
-
-        elif choice == 5:
-            print("Search student: Not implemented")
-
-        elif choice == 6:
-            print("Statistics: Not implemented")
-
-        elif choice == 0:
-            print("Program ended.")
-            break
-
-        else:
-            print("Invalid choice!")
-
-
-if __name__ == "__main__":
-    main()
