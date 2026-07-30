@@ -2,6 +2,17 @@ def show_menu():
     print("1. Add student\n2. Show all students\n3. Update student\n4. Delete student\n5. Search student\n6. Statistics\n0. Exit")
     return  
 
+def get_gpa(cap):
+    # cap là THAM SỐ - tức là 1 phần tử mà sorted() sẽ tự động đưa vào
+    # mỗi lần nó gọi hàm này. cap luôn là 1 TUPLE dạng (gpa, dict_sinh_vien)
+    return cap[0]
+    # return nghĩa là "trả kết quả này ra ngoài cho nơi đã gọi hàm"
+    # ở đây trả về 8.5 (chỉ mỗi con số GPA, bỏ qua dict sinh viên)
+
+def calculate_gpa(student):
+    gpa = (student["math"] + student["english"]+student["programming"]) /3
+    return gpa 
+
 def input_int(message):
     while True:
         try:
@@ -187,26 +198,28 @@ def satistics(students):
                 print(f"total students: {len(students)}")
             elif stat == 2:
                 for i in range (len(students)):
-                    x = (students[i]["math"]+students[i]["english"]+students[i]["programming"]) /3
+                    gpa = calculate_gpa(students[i])
                     print(f"{students[i]["name"]}: {round(x,2)}")
             elif stat == 3:
                 highest = []
-                for i in range (len(students)):
-                    x = (students[i]["math"]+students[i]["english"]+students[i]["programming"]) /3
-                    highest.append(x)
-                for i in range (len(students)):
-                    if (students[i]["math"]+students[i]["english"]+students[i]["programming"]) /3 == max(highest):
-                        print(f"{students[i]["name"]} highest gpa:  {max(highest)}")
-                        break
+                for student in students:    
+                    gpa = calculate_gpa(student)
+                    highest.append((gpa, student))
+                highest = sorted(highest, key=get_gpa, reverse= True)
+                print(f"{highest[0][1]["name"]}: {highest[0][0]}")
             elif stat == 4:
                 category = {}
-                for i in range(len(students)):
-                    x = students[i]["major"]
+                for student in students:
+                    x = student["major"]
                     if x not in category:
                         category[x] = []
-                        category[x].append(students[i])
+                    category[x].append(student)
 
                 for major, list_sv in category.items():
+                    #n.items() là method của dict, dùng để 
+                    # lấy ra tất cả các cặp
+                    # (key, value) trong dict đó, dưới dạng tuple, 
+                    # để duyệt qua bằng for.
                     print(f"major: {major}, students: {len(list_sv)}")
             elif stat == 5:
                 math = 0
@@ -225,7 +238,7 @@ def satistics(students):
                 average = []
                 poor = []
                 for i in range (len(students)):
-                    gpa = (students[i]["math"]+students[i]["english"]+students[i]["programming"]) /3
+                    gpa = calculate_gpa(students[i])
                     if gpa >= 9.0:
                         exce.append(students[i])
                     elif gpa >= 8.0:
@@ -273,6 +286,53 @@ while choice != 0:
         satistics(students)
     elif choice == 7:
         
+        gpa_list = []
+
+        for i in range(len(students)):
+            gpa = calculate_gpa(students[i])
+            gpa_list.append((gpa, students[i]))
+            gpa_list_sorted = sorted(gpa_list, key=get_gpa, reverse=True)
+    # để biết dựa vào đâu mà so sánh, cụ thể Python NGẦM làm như sau:
+    #
+    #   get_gpa((8.5, {"name":"A"}))  -> cap[0] -> return 8.5
+    #   get_gpa((9.2, {"name":"B"}))  -> cap[0] -> return 9.2
+    #   get_gpa((7.0, {"name":"C"}))  -> cap[0] -> return 7.0
+    # sorted() nhận được 3 số 8.5, 9.2, 7.0 -> so sánh chúng
+    # reverse=True -> sắp GIẢM DẦN (cao nhất lên đầu)
+    #
+    # Kết quả gpa_list_sorted:
+    #   [
+    #       (9.2, {"name": "B", ...}),   <- cao nhất
+    #       (8.5, {"name": "A", ...}),
+    #       (7.0, {"name": "C", ...})    <- thấp nhất
+    #   ]
+      # ---- BƯỚC 3: LẤY 3 PHẦN TỬ ĐẦU TIÊN (TOP 3) ----
+        top3 = gpa_list_sorted[:3]
+    # [:3] là "slicing" - nghĩa là "lấy  từ đầu list đến trước vị trí số 3"
+    # tức lấy vị trí 0, 1, 2 -> đúng 3 phần tử đầu tiên (đã sắp GPA cao nhất trước)
+    #
+    # Nếu list gốc có ÍT HƠN 3 sinh viên (ví dụ chỉ có 2),
+    # [:3] vẫn chạy an toàn, chỉ lấy được bao nhiêu có bấy nhiêu, không lỗi.
+
+    # ---- BƯỚC 4: IN KẾT QUẢ ----
+        print("===== Top 3 GPA cao nhất =====")
+        for gpa, sv in top3:
+        # top3 chứa các tuple (gpa, sinh_vien), nên unpack ra 2 biến:
+        #   gpa -> con số, ví dụ 9.2
+        #   sv  -> CẢ dict sinh viên, ví dụ {"name":"B", "age":20, "major":"IT", ...}
+
+            print(f"{sv['name']}: {round(gpa, 2)}")
+        # sv['name'] -> phải tra thêm ["name"] vì sv là CẢ dict, không phải chỉ mỗi tên
+        # round(gpa, 2) -> làm tròn GPA còn 2 chữ số thập phân, ví dụ 9.2 -> "9.2"
+        #
+        # Kết quả in ra màn hình sẽ là:
+        #   ===== Top 3 GPA cao nhất =====
+        #   B: 9.2
+        #   A: 8.5
+        #   C: 7.0
+            
+            
+            
                 
         
             
